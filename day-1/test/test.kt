@@ -14,4 +14,11 @@ class Day1Tests {
         assertEquals(taskExpectedResult, task1Result)
     }
 
+    @Test
+    fun `day 1 task 2 result should be expected`() {
+        val task2Result = task2(File("input/task-1-test.txt"))
+        val taskExpectedResult = 31
+        assertEquals(taskExpectedResult, task2Result)
+    }
+
 }
