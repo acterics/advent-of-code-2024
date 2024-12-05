@@ -4,9 +4,27 @@ import java.io.File
 
 fun main() {
     val task1Result = task1(File("input/task-1.txt"))
-    println("Task 1 Result $task1Result")
+    println("Task 1 Result: $task1Result")
+
+    val task2Result = task2(File("input/task-1.txt"))
+    println("Task 2 Result: $task2Result")
 }
 
+fun task2(inputFile: File): Int {
+    val input = parseInput(inputFile)
+    val comparator = RuleComparator(input.rules)
+    return input.pageNumbers
+        .filter { pageNumbers ->
+            !isPageNumbersCorrect(pageNumbers, rules = input.rules)
+        }
+        .map { pageNumbers ->
+            pageNumbers.mapIndexed { index, value -> index to value }
+                .sortedWith(comparator)
+        }
+        .sumOf { pageNumbers ->
+            pageNumbers[pageNumbers.size / 2].second
+        }
+}
 
 fun task1(inputFile: File): Int {
     val input = parseInput(inputFile)
@@ -74,6 +92,28 @@ data class RuleComparation(
     val isGreater: Boolean
 ) {
     override fun toString(): String = "${if (isGreater) ">" else "<"}$value "
+}
+
+class RuleComparator(private val rules: Map<Int, List<RuleComparation>>) : Comparator<Pair<Int, Int>> {
+    override fun compare(left: Pair<Int, Int>?, right: Pair<Int, Int>?): Int {
+        val (leftIndex, leftValue) = left ?: return -1
+        val (rightIndex, rightValue) = right ?: return 1
+
+        val isGreater = rules[leftValue]
+            ?.firstOrNull { rule -> rule.value == rightValue }
+            ?.let { rule ->
+                rule.isGreater == leftIndex > rightIndex
+            }
+            ?: true
+
+        return if (isGreater) {
+            1
+        } else {
+            -1
+        }
+
+    }
+
 }
 
 fun isPageNumbersCorrect(pageNumbers: List<Int>, rules: Map<Int, List<RuleComparation>>): Boolean {
