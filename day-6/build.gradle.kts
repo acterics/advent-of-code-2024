@@ -16,5 +16,6 @@ kotlin {
     }
 }
 dependencies {
+    implementation(project(":utils"))
     testImplementation(kotlin("test"))
 }
